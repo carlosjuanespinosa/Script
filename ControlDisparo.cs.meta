@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: f8f882bc0aa073b4cbeb40710c358599
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - contadoresplayer: {fileID: 11400000, guid: b4d7aa97c1d12e14d97625fef8eed32b, type: 2}
+  - cultivo: {fileID: 8440191147842225334, guid: 16c96f2272e7cb6499ff7a270b1fa931, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
