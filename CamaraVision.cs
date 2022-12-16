@@ -19,9 +19,9 @@ public class CamaraVision : MonoBehaviour
     void Update()
     {
         float mouseX = lookVector.x * lookXSensitivity * Time.deltaTime;
-        float mouseY = lookVector.y * lookYSensitivity * Time.deltaTime;
+        //float mouseY = lookVector.y * lookYSensitivity * Time.deltaTime;
 
-        xRotation -= mouseY;
+        //xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         player.Rotate(Vector3.up * mouseX);

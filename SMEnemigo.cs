@@ -10,7 +10,8 @@ public class SMEnemigo : MonoBehaviour
     [SerializeField] private float detectionRange = 15;
     [SerializeField] private float atackRange = 1.8F;
     [SerializeField] private LayerMask playerLayer;
-    [SerializeField] private GameObject Hocico;
+    [SerializeField] private Animator animator;
+    
     
     [SerializeField] private Transform prepoint;
     [SerializeField] private Transform point;
@@ -31,13 +32,15 @@ public class SMEnemigo : MonoBehaviour
     private NavMeshAgent agent;
     private Vector3 initialPosition;
     private Vector3 patrolPosition;
+    private GameObject save;
     
     
-    private float nextTimeToAtack = 5;
-    private float atackRate = 2;
+    private float nextTimeToAtack = 0;
+    private float attackCooldown = 2;
    
     private float timeParaliz = 10;
 
+    private bool isParalizado = false;
 
     private void Awake()
     {
@@ -52,9 +55,11 @@ public class SMEnemigo : MonoBehaviour
         target = GameObject.FindGameObjectWithTag("Player");
         initialPosition = transform.position;
         patrolPosition = GetPatrolPosition();
+        save = GameObject.FindGameObjectWithTag("Casa");
     }
     private Vector3 GetPatrolPosition()
     {
+       
         Vector3 pointToPatrol = initialPosition;
         float randomRange = Random.Range(patrolMinRange, patrolMaxRange);
         Vector3 proposedPoint = initialPosition + Random.insideUnitSphere * randomRange;
@@ -76,21 +81,24 @@ public class SMEnemigo : MonoBehaviour
     // Update is called once per frame
     void Update()
     { //Completar Switch ******
+        animator.SetFloat("Velocidad", agent.velocity.magnitude);
+        animator.SetBool("IsParalizado", isParalizado = true);
         switch (state)
         {
             default:
             case State.Patrol:
-                /*Detection(false);*/
+                agent.isStopped = false;
                 agent.SetDestination(patrolPosition);
                 if (agent.remainingDistance < 1f)
                     patrolPosition = GetPatrolPosition();
-
+                
                 FindTarget();
                 break;
 
             case State.chaseTarget:
                // Detection(true);
                 agent.SetDestination(target.transform.position);
+                FindSave();
                 if (Vector3.Distance(transform.position, target.transform.position)<= atackRange)
                 {
                     state = State.AtackTarget;
@@ -109,7 +117,8 @@ public class SMEnemigo : MonoBehaviour
                 LookTarget();
                 if(Vector3.Distance(transform.position, target.transform.position) <= atackRange)
                 {
-                    AtackTimer();
+                    
+                    AttackTimer();
                 }
                  if(Vector3.Distance(transform.position, target.transform.position) > atackRange)
                 {
@@ -119,7 +128,8 @@ public class SMEnemigo : MonoBehaviour
                 break;
 
             case State.ToInitialPosition:
-              //  Detection(false);
+                //  Detection(false);
+                
                 agent.SetDestination(initialPosition);
                 if (agent.remainingDistance < 1f)
                     state = State.Patrol;
@@ -127,10 +137,12 @@ public class SMEnemigo : MonoBehaviour
 
             case State.Paralizado:
                 agent.isStopped = true;
-                if(Time.time > timeParaliz)
+                isParalizado = true;
+                if (Time.time > timeParaliz)
                 {
-                    agent.isStopped = false;
+                   
                     state = State.Patrol;
+                    isParalizado = false;
                 }
                 break;
         }
@@ -149,6 +161,16 @@ public class SMEnemigo : MonoBehaviour
             
     }
 
+    private void FindSave()
+    {
+        if (save == null)
+            return;
+        if (Vector3.Distance(transform.position, save.transform.position) <= detectionRange)
+        {
+
+            state = State.ToInitialPosition;
+        }
+    }
  
 
     private void LookTarget()
@@ -161,25 +183,44 @@ public class SMEnemigo : MonoBehaviour
     }
 
 
-    private void AtackTimer()
+    private void AttackTimer()
     {
         if (Time.time > nextTimeToAtack)
         {
+            Debug.Log("mando Ataque");
             PerformAtack();
-            nextTimeToAtack = Time.time + 5 / atackRate;
+            nextTimeToAtack = Time.time + attackCooldown;
         }
     }
    public void Paraliz()
     {
+        animator.SetTrigger("Paralizado");
         timeParaliz = Time.time + 10;
         state = State.Paralizado;
-        Debug.Log("Puto paralizado");
+       
             }
     private void PerformAtack()
     {
-        GameObject mordisco = Instantiate(Hocico, visorPoint.position, visorPoint.rotation);
-        Destroy(mordisco, 1f);
+        animator.SetTrigger("Ataque");
+        Debug.Log("Triguer Ataque");
+       
+
+        
+
     }
+
+    private void HerirJugador()
+    {
+        if (Vector3.Distance(transform.position, target.transform.position) > atackRange)
+            return;
+
+        if (target.TryGetComponent(out ContadorPlayer player))
+        {
+            player.DamagePlayer(5);
+        }
+        
+    }
+    
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, detectionRange);

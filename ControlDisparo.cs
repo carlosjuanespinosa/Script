@@ -41,39 +41,26 @@ public class ControlDisparo : MonoBehaviour
                 GameObject objectInstance = Instantiate(Pimiento, transform.position, transform.rotation);
                 Destroy(objectInstance, 2f);
                 contadoresplayer.SumarCultivos();
-                Debug.Log("Disparo Pimiento");
-            }
-            else {
-                if (contadoresplayer.Maiz > 0)
-                {
-                    contadoresplayer.Disparar();
-                    GameObject objectInstance = Instantiate(Maiz, transform.position, transform.rotation);
-                    Destroy(objectInstance, 2f);
-                    contadoresplayer.SumarCultivos();
-                    Debug.Log("Disparo Maiz");
-                }
-                else {
-                    if (contadoresplayer.Tomates > 0)
-                    {
-                        contadoresplayer.Disparar();
-                        GameObject objectInstance = Instantiate(Tomate, transform.position, transform.rotation);
-                        Destroy(objectInstance, 2f);
-                        contadoresplayer.SumarCultivos();
-                        Debug.Log("Disparo Tomate");
-                    }
-                }
                 
             }
-            
+            else if (contadoresplayer.Maiz > 0)
+            {
+                contadoresplayer.Disparar();
+                GameObject objectInstance = Instantiate(Maiz, transform.position, transform.rotation);
+                Destroy(objectInstance, 2f);
+                contadoresplayer.SumarCultivos();
+              
+            }
+            else if (contadoresplayer.Tomates > 0)
+            {
+                contadoresplayer.Disparar();
+                GameObject objectInstance = Instantiate(Tomate, transform.position, transform.rotation);
+                Destroy(objectInstance, 2f);
+                contadoresplayer.SumarCultivos();
+               
+            }
         }
-        else
-        {
-            return;
-        }
-        
-     
-       
-        
+             
     }
     private void CuerpoaCuerpo()
     {
