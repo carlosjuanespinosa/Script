@@ -12,7 +12,7 @@ public class InputPlayer : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-
+        AudioManager.i.PlaySound(SoundName.Croar, gameObject.transform.position);
         movenementController = GetComponent<Movimiento>();
         lookController = GetComponentInChildren<CamaraVision>();
       

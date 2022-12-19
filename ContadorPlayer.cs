@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ContadorPlayer : MonoBehaviour
 {
+    
     [SerializeField] private ContadoresPlayer contadoresPlayer;
     [SerializeField] private Casa casa;
 public void DamagePlayer(float amount)

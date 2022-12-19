@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [CreateAssetMenu(fileName ="ContadorCasa", menuName ="ScriptableObjects/ContadorCasa")]
 
@@ -53,7 +54,7 @@ public class ContadorCasa : ScriptableObject
     {
         if(Tomates>=20 && Maiz >= 10 && Pimientos >= 5)
         {
-            Debug.Log("Has ganado");
+            SceneManager.LoadScene("Win", LoadSceneMode.Single);
         }
     }
 }

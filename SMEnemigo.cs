@@ -8,7 +8,7 @@ public class SMEnemigo : MonoBehaviour
     [SerializeField] private float patrolMaxRange =15;
     [SerializeField] private float patrolMinRange = 0;
     [SerializeField] private float detectionRange = 15;
-    [SerializeField] private float atackRange = 1.8F;
+    [SerializeField] private float atackRange = 2F;
     [SerializeField] private LayerMask playerLayer;
     [SerializeField] private Animator animator;
     
@@ -38,9 +38,11 @@ public class SMEnemigo : MonoBehaviour
     private float nextTimeToAtack = 0;
     private float attackCooldown = 2;
    
-    private float timeParaliz = 10;
+    private float timeParaliz = 5;
 
     private bool isParalizado = false;
+
+    private float timesound;
 
     private void Awake()
     {
@@ -51,6 +53,9 @@ public class SMEnemigo : MonoBehaviour
 
     private void Start()
     {
+     
+            timesound = Time.time + Random.Range(0f, 30f);
+        
         state = State.Patrol;
         target = GameObject.FindGameObjectWithTag("Player");
         initialPosition = transform.position;
@@ -59,7 +64,8 @@ public class SMEnemigo : MonoBehaviour
     }
     private Vector3 GetPatrolPosition()
     {
-       
+        
+      
         Vector3 pointToPatrol = initialPosition;
         float randomRange = Random.Range(patrolMinRange, patrolMaxRange);
         Vector3 proposedPoint = initialPosition + Random.insideUnitSphere * randomRange;
@@ -80,13 +86,21 @@ public class SMEnemigo : MonoBehaviour
     }
     // Update is called once per frame
     void Update()
-    { //Completar Switch ******
+    {
+      
         animator.SetFloat("Velocidad", agent.velocity.magnitude);
         animator.SetBool("IsParalizado", isParalizado = true);
         switch (state)
         {
             default:
             case State.Patrol:
+
+                if (Time.time >= timesound)
+                {
+                    AudioManager.i.PlaySound(SoundName.LadridoPerro, gameObject.transform.position);
+                    timesound = Time.time + Random.Range(0f, 30f);
+                }
+
                 agent.isStopped = false;
                 agent.SetDestination(patrolPosition);
                 if (agent.remainingDistance < 1f)
@@ -194,6 +208,8 @@ public class SMEnemigo : MonoBehaviour
     }
    public void Paraliz()
     {
+        AudioManager.i.PlaySound(SoundName.GemidoPerro, gameObject.transform.position);
+
         animator.SetTrigger("Paralizado");
         timeParaliz = Time.time + 10;
         state = State.Paralizado;
@@ -202,6 +218,7 @@ public class SMEnemigo : MonoBehaviour
     private void PerformAtack()
     {
         animator.SetTrigger("Ataque");
+        AudioManager.i.PlaySound(SoundName.AtaquePerro, gameObject.transform.position);
         Debug.Log("Triguer Ataque");
        
 
